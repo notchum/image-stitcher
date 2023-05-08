@@ -3,26 +3,37 @@
 //! image-stitcher
 //! image-stitcher
 
-// use clap::Parser;
+use clap::{Args, Parser};
 use image::{GenericImage, GenericImageView};
 
-// #[derive(Parser, Debug)]
-// #[command(author, version, about, long_about = None)]
-// struct Args {
-//     /// Name of the person to greet
-//     #[arg(short, long)]
-//     name: String,
-//
-//     /// Number of times to greet
-//     #[arg(short, long, default_value_t = 1)]
-//     count: u8,
-// }
+#[derive(Parser)]
+#[command(author, version, about, long_about = None)]
+struct Cli {
+    #[command(flatten)]
+    orient: Orient,
+
+    #[arg(required = true)]
+    image_1: String,
+
+    #[arg(required = true)]
+    image_2: String,
+}
+
+#[derive(Args)]
+#[group(required = true, multiple = false)]
+struct Orient {
+    #[arg(long)]
+    horizontal: bool,
+
+    #[arg(long)]
+    vertical: bool,
+}
 
 fn main() {
-    // let args = Args::parse();
+    let cli = Cli::parse();
 
-    let imgx = image::open("/home/chum/repos/dotfiles/prose/screenshot1.png").unwrap();
-    let imgy = image::open("/home/chum/repos/dotfiles/prose/screenshot2.png").unwrap();
+    let imgx = image::open(cli.image_1).unwrap();
+    let imgy = image::open(cli.image_2).unwrap();
 
     println!("dimensions {:?}", imgx.dimensions());
     println!("dimensions {:?}", imgy.dimensions());
